@@ -27,8 +27,8 @@ function buildIndex() {
   })
 }
 
-function buildAll() {
-  buildIndex()
+async function buildAll() {
+  await buildIndex()
   projects.forEach(proj => proj.build())
   console.log('ran buildAll')
 }
