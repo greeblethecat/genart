@@ -1,16 +1,40 @@
-// Load all of the Project instances from projects/
 const fs = require('fs')
+const ejs = require('ejs')
+
+// Load all of the Project instances from projects/
 const projects = fs.readdirSync('projects').map(proj => {
   let project = require(`./projects/${proj}/${proj}.js`)
   project.name = proj
   return project
 })
 
-function buildAll() {
-  console.log(projects)
-  projects.forEach(proj => proj.build())
+function buildIndex() {
+  return new Promise((res, rej) => {
+    let outputDir = `docs`
+    // If outputDir doesn't exist, then create it
+    try {
+      fs.accessSync(outputDir)
+    } catch (err) {
+      fs.mkdirSync(outputDir)
+    }
+    ejs.renderFile(`${__dirname}/lib/views/index.ejs`, {}, {}, (err, str) => {
+      if (err) { rej(err) }
+      fs.writeFile(`${outputDir}/index.html`, str, err => {
+        res()
+        console.log('built index')
+      })
+    })
+  })
+}
 
+function buildAll() {
+  buildIndex()
+  projects.forEach(proj => proj.build())
   console.log('ran buildAll')
+}
+
+function defaultTask() {
+  buildAll()
 }
 
 // Interpret the command line argument(s), if any
@@ -25,5 +49,5 @@ if (TASK_ARG) {
       break
   }
 } else {
-  buildAll()
+  defaultTask()
 }
