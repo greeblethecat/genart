@@ -62,7 +62,10 @@ async function assemblePieces() {
   allPieces.forEach(async pieceName => {
     await fsPromises.copyFile(`${VIEW_PIECES_DIR}/${pieceName}`, `${OUTPUT_PIECES_DIR}/${pieceName}`)
   })
-  console.log(allPieces)
+  // TODO: Render an html page for each piece
+  // TODO: write to docs/<pieceId>.html
+  // TODO: include the correspeonding javascript file
+  console.log('allPieces=',allPieces)
   console.log(`assembled ${allPieces.length} pieces`)
 }
 
