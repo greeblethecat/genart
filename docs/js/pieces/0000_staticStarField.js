@@ -1,0 +1,1 @@
+alert('hello from piece 0000')
