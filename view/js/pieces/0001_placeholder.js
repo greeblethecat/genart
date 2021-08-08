@@ -1,0 +1,1 @@
+window.alert(`hello from 0001_placeholder!!`)

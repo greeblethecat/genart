@@ -7,5 +7,10 @@
   </head>
   <body>
     <h1>canvas-p5</h1>
+    <ul>
+      <% AllPieces.forEach(piece => { %>
+        <li><a href='/<%= piece.id %>.html'><%= piece.jsName %></a></li>
+      <% }) %>
+    </ul>
   </body>
 </html>

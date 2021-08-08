@@ -18,12 +18,33 @@ const OUTPUT_JS_DIR = `${OUTPUT_DIR}/js`
 const OUTPUT_VENDOR_DIR = `${OUTPUT_JS_DIR}/vendor`
 const OUTPUT_PIECES_DIR = `${OUTPUT_JS_DIR}/pieces`
 
-function createDirIfNotExist(dir) {
-    try {
-      fs.accessSync(dir)
-    } catch (err) {
-      fs.mkdirSync(dir)
+const AllPieces = fs.readdirSync(VIEW_PIECES_DIR).map(jsName => {
+  let pieceId = undefined
+  let pieceName = undefined
+  try {
+    pieceId = jsName.split('_')[0]
+    pieceName = jsName.split('_')[1].split('.')[0]
+    if (!pieceId && !pieceName) {
+      throw new Error('undefined piece name or id')
     }
+  } catch (err) {
+    console.log(`error parsing piece js from fileName '${jsName}'.`)
+    console.log(`name should be in format XXXX_pieceNameGoesHere.js`)
+    throw err
+  }
+  return {
+    name: pieceName,
+    id: pieceId,
+    jsName: jsName,
+  }
+})
+
+function createDirIfNotExist(dir) {
+  try {
+    fs.accessSync(dir)
+  } catch (err) {
+    fs.mkdirSync(dir)
+  }
 }
 
 async function clean() {
@@ -31,6 +52,7 @@ async function clean() {
   //})
   await fsPromises.rm(OUTPUT_DIR, { recursive: true, force: true })
   createDirIfNotExist(OUTPUT_DIR)
+  console.log('finished clean')
 }
 
 async function assembleBoilerplate() {
@@ -38,13 +60,21 @@ async function assembleBoilerplate() {
   createDirIfNotExist(OUTPUT_VENDOR_DIR)
   createDirIfNotExist(OUTPUT_PIECES_DIR)
 
-  // Copy over the p5.js src
+  // Copy over the p5.js library
   createDirIfNotExist(`${OUTPUT_VENDOR_DIR}/p5`)
   await fsPromises.copyFile(`${VIEW_VENDOR_DIR}/p5/p5.js`, `${OUTPUT_VENDOR_DIR}/p5/p5.js`)
 
+  await assembleIndexPage()
+
+  console.log('assembled boilerplate')
+}
+
+async function assembleIndexPage() {
   // Assemble index.ejs page
   await new Promise((resolve, reject) => {
-    ejs.renderFile(`${VIEW_DIR}/index.ejs`, {}, {}, (err, str) => {
+    ejs.renderFile(`${VIEW_DIR}/index.ejs`, {
+      AllPieces: AllPieces,
+    }, {}, (err, str) => {
       if (err) { reject(err) }
       fs.writeFile(`${OUTPUT_DIR}/index.html`, str, err => {
         if (err) { reject(err) }
@@ -52,21 +82,29 @@ async function assembleBoilerplate() {
       })
     })
   })
-
-  console.log('assembled boilerplate')
 }
 
 async function assemblePieces() {
   // Load all of the pieces
-  const allPieces = fs.readdirSync(VIEW_PIECES_DIR)
-  allPieces.forEach(async pieceName => {
-    await fsPromises.copyFile(`${VIEW_PIECES_DIR}/${pieceName}`, `${OUTPUT_PIECES_DIR}/${pieceName}`)
+  AllPieces.forEach(async piece => {
+    await fsPromises.copyFile(`${VIEW_PIECES_DIR}/${piece.jsName}`, `${OUTPUT_PIECES_DIR}/${piece.jsName}`)
   })
   // TODO: Render an html page for each piece
+  AllPieces.forEach(piece => {
+    ejs.renderFile(`${VIEW_DIR}/piece.ejs`, {
+      piece: piece
+    }, {}, (err, str) => {
+      if (err) { throw err }
+      fs.writeFile(`${OUTPUT_DIR}/${piece.id}.html`, str, err => {
+        if (err) { throw err }
+      })
+    })
+  })
+
   // TODO: write to docs/<pieceId>.html
   // TODO: include the correspeonding javascript file
-  console.log('allPieces=',allPieces)
-  console.log(`assembled ${allPieces.length} pieces`)
+  console.log('allPieces=', AllPieces)
+  console.log(`assembled ${AllPieces.length} pieces`)
 }
 
 async function assemble() {
@@ -89,7 +127,7 @@ function defaultTask() {
 const TASK_ARG_IDX = 2
 const TASK_ARG = process.argv[TASK_ARG_IDX]
 if (TASK_ARG) {
-  switch(TASK_ARG) {
+  switch (TASK_ARG) {
     case 'clean':
       clean()
       break
