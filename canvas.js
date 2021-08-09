@@ -85,11 +85,13 @@ async function assembleIndexPage() {
 }
 
 async function assemblePieces() {
-  // Load all of the pieces
+
+  // Copy the js for each piece to the docs dir
   AllPieces.forEach(async piece => {
     await fsPromises.copyFile(`${VIEW_PIECES_DIR}/${piece.jsName}`, `${OUTPUT_PIECES_DIR}/${piece.jsName}`)
   })
-  // TODO: Render an html page for each piece
+
+  // Compile piece.ejs for each piece and place html output to the docs dir
   AllPieces.forEach(piece => {
     ejs.renderFile(`${VIEW_DIR}/piece.ejs`, {
       piece: piece
@@ -100,9 +102,6 @@ async function assemblePieces() {
       })
     })
   })
-
-  // TODO: write to docs/<pieceId>.html
-  // TODO: include the correspeonding javascript file
   console.log('allPieces=', AllPieces)
   console.log(`assembled ${AllPieces.length} pieces`)
 }
@@ -119,8 +118,13 @@ async function build() {
   console.log('finished build')
 }
 
+function startDevServices() {
+  // TODO: configure and start express server
+}
+
 function defaultTask() {
   build()
+  startDevServices()
 }
 
 // Interpret the command line argument(s), if any
