@@ -64,6 +64,13 @@ async function assembleBoilerplate() {
   createDirIfNotExist(`${OUTPUT_VENDOR_DIR}/p5`)
   await fsPromises.copyFile(`${VIEW_VENDOR_DIR}/p5/p5.js`, `${OUTPUT_VENDOR_DIR}/p5/p5.js`)
 
+  // Copy over stylesheets
+  createDirIfNotExist(`${OUTPUT_DIR}/styles`)
+  fs.readdirSync(`${VIEW_DIR}/styles`).forEach(async styleSheet => {
+    await fsPromises.copyFile(`${VIEW_DIR}/styles/${styleSheet}`,
+                              `${OUTPUT_DIR}/styles/${styleSheet}`)
+  })
+
   await assembleIndexPage()
 
   console.log('assembled boilerplate')
