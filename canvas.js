@@ -60,6 +60,13 @@ async function assembleBoilerplate() {
   createDirIfNotExist(OUTPUT_VENDOR_DIR)
   createDirIfNotExist(OUTPUT_PIECES_DIR)
 
+  // Copy over js libs
+  createDirIfNotExist(`${OUTPUT_JS_DIR}/lib`)
+  fs.readdirSync(`${VIEW_JS_DIR}/lib`).forEach(async jsFile => {
+    await fsPromises.copyFile(`${VIEW_JS_DIR}/lib/${jsFile}`,
+                              `${OUTPUT_JS_DIR}/lib/${jsFile}`)
+  })
+
   // Copy over the p5.js library
   createDirIfNotExist(`${OUTPUT_VENDOR_DIR}/p5`)
   await fsPromises.copyFile(`${VIEW_VENDOR_DIR}/p5/p5.js`, `${OUTPUT_VENDOR_DIR}/p5/p5.js`)
@@ -126,7 +133,10 @@ async function build() {
 }
 
 function startDevServices() {
-  // TODO: configure and start express server
+  // TODO: start web server that serves /docs
+}
+function stopDevServices() {
+  // TODO: stop services started in function above
 }
 
 function defaultTask() {
