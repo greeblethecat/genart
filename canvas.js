@@ -6,8 +6,10 @@
 
 const fs = require('fs')
 const fsPromises = require('fs/promises')
+const child_process = require('child_process')
 const ejs = require('ejs')
-const { start } = require('repl')
+const puppeteer = require('puppeteer')
+const PuppeteerVideoRecorder = require('puppeteer-video-recorder')
 
 const VIEW_DIR = `${__dirname}/view`
 const VIEW_JS_DIR = `${VIEW_DIR}/js`
@@ -46,15 +48,28 @@ function createDirIfNotExist(dir) {
   }
 }
 
-async function clean() {
+class Task {
+  static AllTasks = []
+  static FindTaskForName(name) {
+    let task = AllTasks.find(task => task.command === name)
+    return task
+  }
+  constructor(command, func) {
+    this.command = command
+    this.func = func
+    Task.AllTasks.push(this)
+  }
+}
+
+new Task('clean', async function clean() {
   //fs.rmdir(OUTPUT_DIR, { recursive: true }, (err) => {
   //})
   await fsPromises.rm(OUTPUT_DIR, { recursive: true, force: true })
   createDirIfNotExist(OUTPUT_DIR)
   console.log('finished clean')
-}
+})
 
-async function assembleBoilerplate() {
+new Task('assembleBoilerplate', async function assembleBoilerplate() {
   createDirIfNotExist(OUTPUT_JS_DIR)
   createDirIfNotExist(OUTPUT_PIECES_DIR)
 
@@ -62,7 +77,7 @@ async function assembleBoilerplate() {
   createDirIfNotExist(`${OUTPUT_JS_DIR}/lib`)
   fs.readdirSync(`${VIEW_JS_DIR}/lib`).forEach(async jsFile => {
     await fsPromises.copyFile(`${VIEW_JS_DIR}/lib/${jsFile}`,
-                              `${OUTPUT_JS_DIR}/lib/${jsFile}`)
+      `${OUTPUT_JS_DIR}/lib/${jsFile}`)
   })
 
   // Copy over the p5.js library
@@ -74,15 +89,15 @@ async function assembleBoilerplate() {
   createDirIfNotExist(`${OUTPUT_DIR}/styles`)
   fs.readdirSync(`${VIEW_DIR}/styles`).forEach(async styleSheet => {
     await fsPromises.copyFile(`${VIEW_DIR}/styles/${styleSheet}`,
-                              `${OUTPUT_DIR}/styles/${styleSheet}`)
+      `${OUTPUT_DIR}/styles/${styleSheet}`)
   })
 
   await assembleIndexPage()
 
   console.log('assembled boilerplate')
-}
+})
 
-async function assembleIndexPage() {
+new Task('assembleIndexPage', async function assembleIndexPage() {
   // Assemble index.ejs page
   await new Promise((resolve, reject) => {
     ejs.renderFile(`${VIEW_DIR}/index.ejs`, {
@@ -95,9 +110,9 @@ async function assembleIndexPage() {
       })
     })
   })
-}
+})
 
-async function assemblePieces() {
+new Task('assemblePieces', async function assemblePieces() {
 
   // Copy the js for each piece to the docs dir
   AllPieces.forEach(async piece => {
@@ -117,26 +132,25 @@ async function assemblePieces() {
   })
   console.log('allPieces=', AllPieces)
   console.log(`assembled ${AllPieces.length} pieces`)
-}
+})
 
-async function assemble() {
+new Task('assemble', async () => {
   await assembleBoilerplate()
   await assemblePieces()
   console.log('finished assemble')
-}
+})
 
-async function build() {
+new Task('build', async function build() {
   await clean()
   await assemble()
   console.log('finished build')
-}
+})
 
-const child_process = require('child_process')
 function startDevServices() {
   let grep = false
   try {
     grep = child_process.execSync(`ps -e | grep http-server`)
-  } catch (error) {}
+  } catch (error) { }
   if (!grep) {
     child_process.spawn(`http-server`, ['-c0', 'docs'], {
       detached: true
@@ -151,7 +165,7 @@ function stopDevServices() {
   let grep = false
   try {
     grep = child_process.execSync(`ps -e | grep http-server`)
-  } catch (error) {}
+  } catch (error) { }
   if (grep) {
     const command = `pkill http-server`
     let result = child_process.execSync(command)
@@ -161,21 +175,61 @@ function stopDevServices() {
   }
 }
 
-const puppeteer = require('puppeteer')
-async function screenshotPage(id=null) {
+new Task('screenshot', async function screenshotPage(id) {
   const browser = await puppeteer.launch()
   const page = await browser.newPage()
-  await page.goto('google.com', { waitUntil: 'networkidle2'})
-  await page.screenshot({ path: `${VIEW_DIR}/assets/index.png` })
+  await page.goto(`http://localhost:8080/${id}.html`, { waitUntil: 'networkidle2' })
+  await page.screenshot({ path: `${VIEW_DIR}/assets/temp/${id}.png` })
   await browser.close()
-}
+  console.log('Took screenshot of piece with id=',id)
+})
+
+const BROWSER_WINDOW_LENGTH=1080
+new Task('recordMovie', async function recordMovie(id, lengthInSecs) {
+  lengthInSecs = parseInt(lengthInSecs)
+  const browser = await puppeteer.launch({
+    headless: true,
+    ignoreHTTPSErrors: true,
+    args: [`--window-size=${BROWSER_WINDOW_LENGTH},${BROWSER_WINDOW_LENGTH}`]
+  })
+  const page = await browser.newPage()
+  const recorder = new PuppeteerVideoRecorder()
+  await recorder.init(page, `${VIEW_DIR}/assets/temp`)
+  await page.goto(`http://localhost:8080/${id}.html`, { waitUntil: 'networkidle2' })
+  await new Promise(async (resolve, reject) => {
+    await recorder.start()
+    setTimeout(async () => {
+      await recorder.stop()
+      resolve()
+    }, lengthInSecs * 1000)
+  })
+  await browser.close()
+  console.log('Made recording of piece with id=', id, 'for secs=', lengthInSecs)
+})
 
 function defaultTask() {
   build()
-  //startDevServices()
+  startDevServices()
+}
+
+const AllTasks = Task.AllTasks
+console.log('AllTasks=', AllTasks.map(t => t.command).join(', '))
+const TaskName = process.argv[2]
+const TaskArgs = process.argv.slice(3)
+console.log('task=', TaskName, 'args=', TaskArgs)
+if (TaskName) {
+  let task = Task.FindTaskForName(TaskName)
+  if (task) {
+    task.func.bind(this)(...TaskArgs)
+  } else {
+      throw new Exception(`Don't know how to run task '${TaskName}'`)
+  }
+} else {
+  defaultTask()
 }
 
 // Interpret the command line argument(s), if any
+/*
 const TASK_ARG_IDX = 2
 const TASK_ARG = process.argv[TASK_ARG_IDX]
 if (TASK_ARG) {
@@ -197,9 +251,9 @@ if (TASK_ARG) {
       stopDevServices()
       break
     default:
-      throw new Exception(`Don't know how to run task '${TASK_ARG}'`)
       break
   }
 } else {
   defaultTask()
 }
+*/
