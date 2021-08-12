@@ -7,15 +7,14 @@
 const fs = require('fs')
 const fsPromises = require('fs/promises')
 const ejs = require('ejs')
+const { start } = require('repl')
 
 const VIEW_DIR = `${__dirname}/view`
 const VIEW_JS_DIR = `${VIEW_DIR}/js`
-const VIEW_VENDOR_DIR = `${VIEW_JS_DIR}/vendor`
 const VIEW_PIECES_DIR = `${VIEW_JS_DIR}/pieces`
 
 const OUTPUT_DIR = `${__dirname}/docs`
 const OUTPUT_JS_DIR = `${OUTPUT_DIR}/js`
-const OUTPUT_VENDOR_DIR = `${OUTPUT_JS_DIR}/vendor`
 const OUTPUT_PIECES_DIR = `${OUTPUT_JS_DIR}/pieces`
 
 const AllPieces = fs.readdirSync(VIEW_PIECES_DIR).map(jsName => {
@@ -57,7 +56,6 @@ async function clean() {
 
 async function assembleBoilerplate() {
   createDirIfNotExist(OUTPUT_JS_DIR)
-  createDirIfNotExist(OUTPUT_VENDOR_DIR)
   createDirIfNotExist(OUTPUT_PIECES_DIR)
 
   // Copy over js libs
@@ -68,8 +66,9 @@ async function assembleBoilerplate() {
   })
 
   // Copy over the p5.js library
-  createDirIfNotExist(`${OUTPUT_VENDOR_DIR}/p5`)
-  await fsPromises.copyFile(`${VIEW_VENDOR_DIR}/p5/p5.js`, `${OUTPUT_VENDOR_DIR}/p5/p5.js`)
+  createDirIfNotExist(`${OUTPUT_JS_DIR}/vendor`)
+  createDirIfNotExist(`${OUTPUT_JS_DIR}/vendor/p5`)
+  await fsPromises.copyFile(`${VIEW_JS_DIR}/vendor/p5/p5.js`, `${OUTPUT_JS_DIR}/vendor/p5/p5.js`)
 
   // Copy over stylesheets
   createDirIfNotExist(`${OUTPUT_DIR}/styles`)
@@ -132,16 +131,48 @@ async function build() {
   console.log('finished build')
 }
 
+const child_process = require('child_process')
 function startDevServices() {
-  // TODO: start web server that serves /docs
+  let grep = false
+  try {
+    grep = child_process.execSync(`ps -e | grep http-server`)
+  } catch (error) {}
+  if (!grep) {
+    child_process.spawn(`http-server`, ['-c0', 'docs'], {
+      detached: true
+    })
+    console.log('started http-server', 'http://localhost:8080')
+  } else {
+    console.log('existing http-server', 'http://localhost:8080')
+  }
+  process.exit()
 }
 function stopDevServices() {
-  // TODO: stop services started in function above
+  let grep = false
+  try {
+    grep = child_process.execSync(`ps -e | grep http-server`)
+  } catch (error) {}
+  if (grep) {
+    const command = `pkill http-server`
+    let result = child_process.execSync(command)
+    console.log(command, result.toString())
+  } else {
+    console.log('no http-server to pkill')
+  }
+}
+
+const puppeteer = require('puppeteer')
+async function screenshotPage(id=null) {
+  const browser = await puppeteer.launch()
+  const page = await browser.newPage()
+  await page.goto('google.com', { waitUntil: 'networkidle2'})
+  await page.screenshot({ path: `${VIEW_DIR}/assets/index.png` })
+  await browser.close()
 }
 
 function defaultTask() {
   build()
-  startDevServices()
+  //startDevServices()
 }
 
 // Interpret the command line argument(s), if any
@@ -158,6 +189,12 @@ if (TASK_ARG) {
       break
     case 'build':
       build()
+      break
+    case 'startDev':
+      startDevServices()
+      break
+    case 'stopDev':
+      stopDevServices()
       break
     default:
       throw new Exception(`Don't know how to run task '${TASK_ARG}'`)
