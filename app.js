@@ -3,7 +3,8 @@
  *
  * Kinda like a janky gradle
  */
-
+const jstk = require('javascript-tk')
+const Task = jstk.cli.Task
 const fs = require('fs')
 const fsPromises = require('fs/promises')
 const child_process = require('child_process')
@@ -40,32 +41,11 @@ const AllPieces = fs.readdirSync(VIEW_PIECES_DIR).map(jsName => {
   }
 })
 
-function createDirIfNotExist(dir) {
-  try {
-    fs.accessSync(dir)
-  } catch (err) {
-    fs.mkdirSync(dir)
-  }
-}
-
-class Task {
-  static AllTasks = []
-  static FindTaskForName(name) {
-    let task = AllTasks.find(task => task.command === name)
-    return task
-  }
-  constructor(command, func) {
-    this.command = command
-    this.func = func
-    Task.AllTasks.push(this)
-  }
-}
-
 new Task('clean', async function clean() {
   //fs.rmdir(OUTPUT_DIR, { recursive: true }, (err) => {
   //})
   await fsPromises.rm(OUTPUT_DIR, { recursive: true, force: true })
-  createDirIfNotExist(OUTPUT_DIR)
+  jstk.cli.createDirIfNotExist(OUTPUT_DIR)
   console.log('finished clean')
 })
 
@@ -140,11 +120,12 @@ new Task('assemble', async () => {
   console.log('finished assemble')
 })
 
-new Task('build', async function build() {
+async function build() {
   await clean()
   await assemble()
   console.log('finished build')
-})
+}
+new Task('build', build)
 
 function startDevServices() {
   let grep = false
@@ -227,33 +208,3 @@ if (TaskName) {
 } else {
   defaultTask()
 }
-
-// Interpret the command line argument(s), if any
-/*
-const TASK_ARG_IDX = 2
-const TASK_ARG = process.argv[TASK_ARG_IDX]
-if (TASK_ARG) {
-  switch (TASK_ARG) {
-    case 'clean':
-      clean()
-      break
-    case 'assemble':
-      clean()
-      assemble()
-      break
-    case 'build':
-      build()
-      break
-    case 'startDev':
-      startDevServices()
-      break
-    case 'stopDev':
-      stopDevServices()
-      break
-    default:
-      break
-  }
-} else {
-  defaultTask()
-}
-*/
