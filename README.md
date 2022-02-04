@@ -11,4 +11,4 @@ Dev setup:
 Useful commands:     
 `$ npm run clean` - cleans generated pages     
 `$ npm run build` - builds web pages     
-`$ npm run watch` - starts server for web pages and watches source     
+`$ npm run watch` - starts server for web pages and watches source code for changes     
