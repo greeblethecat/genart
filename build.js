@@ -7,32 +7,36 @@ const { exec, execSync } = require('child_process');
 const ejs = require('ejs');
 const AllPiecesJS = fs.readdirSync(`${Config.viewDir}/js/pieces`);
 
-// Setup output directories and copy from view
-console.log("Creating output directories");
-[ 'js',
-  'styles',
-  'assets'
-].forEach(dir => {
-  execSync(`mkdir -p ${Config.outputDir}/${dir}`);
-  exec(`cp -r ${Config.viewDir}/${dir}/* ${Config.outputDir}/${dir}`);
-});
-execSync(`mkdir -p ${Config.outputDir}/genart`);
+function setupOutputDirs() {
+  console.log("Creating output directories");
+  [ 'js',
+    'styles',
+    'assets'
+  ].forEach(dir => {
+    execSync(`mkdir -p ${Config.outputDir}/${dir}`);
+    exec(`cp -r ${Config.viewDir}/${dir}/* ${Config.outputDir}/${dir}`);
+  });
+  execSync(`mkdir -p ${Config.outputDir}/genart`);
+}
 
 // Generate index page
-ejs.renderFile(`${Config.viewDir}/index.ejs`, { AllPieces: AllPiecesJS.map(pieceJS => {
-  return {
-    id: pieceJS.split('_')[0],
-    jsName: pieceJS
-  };
-  }) }, {}, (err, str) => {
-  if (err) { throw err; }
-  fs.writeFile(`${Config.outputDir}/index.html`, str, err => {
+function renderIndexPage() {
+  console.log("Rendering index page");
+  ejs.renderFile(`${Config.viewDir}/index.ejs`, { AllPieces: AllPiecesJS.map(pieceJS => {
+      return {
+        id: pieceJS.split('_')[0],
+        jsName: pieceJS
+      };
+    }) }, {}, (err, str) => {
     if (err) { throw err; }
+    fs.writeFile(`${Config.outputDir}/index.html`, str, err => {
+      if (err) { throw err; }
+    });
   });
-});
+}
 
-// Generate piece pages
-AllPiecesJS.forEach(pieceJS => {
+function renderPiece(pieceJS) {
+  console.log(`Rendering page for piece ${pieceJS}`);
   let piece = {
     id: pieceJS.split('_')[0],
     jsName: pieceJS,
@@ -43,4 +47,18 @@ AllPiecesJS.forEach(pieceJS => {
       if (err) { throw err; }
     });
   });
-});
+}
+function renderAllPieces() {
+  console.log('Rendering pages for all pieces');
+  AllPiecesJS.forEach(renderPiece);
+}
+
+setupOutputDirs();
+renderIndexPage();
+renderAllPieces();
+
+module.exports = {
+  renderIndexPage: renderIndexPage,
+  renderPiece: renderPiece,
+  renderAllPieces: renderAllPieces,
+}
