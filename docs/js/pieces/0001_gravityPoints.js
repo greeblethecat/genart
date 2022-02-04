@@ -39,7 +39,6 @@ class Point extends Transform {
     stroke('white')
     strokeWeight(this.scale)
     point(this.pos.x,this.pos.y)
-    //this.applyMyGravityUniversally()
   }
 
 }
@@ -52,9 +51,7 @@ function draw() {
       AllPoints.forEach(otherPoint => {
         if (point !== otherPoint) {
           let F = (point.scale * otherPoint.scale) / (dist(point.pos.x, point.pos.y, otherPoint.pos.x, otherPoint.pos.y))
-          //let deltaVec = this.deltaVectorToMe(point)
           otherPoint.pos.lerp(point.pos, F * 0.00001 * deltaTime)
-          //otherPoint.pos.lerp(point.pos, 0)
         }
       })
   })
