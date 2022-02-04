@@ -1,3 +1,6 @@
+/**
+ * Generates web pages and publishes them to the github pages folder.
+ */
 const Config = require('./config');
 const fs = require('fs');
 const { exec, execSync } = require('child_process');
@@ -13,6 +16,7 @@ console.log("Creating output directories");
   execSync(`mkdir -p ${Config.outputDir}/${dir}`);
   exec(`cp -r ${Config.viewDir}/${dir}/* ${Config.outputDir}/${dir}`);
 });
+execSync(`mkdir -p ${Config.outputDir}/genart`);
 
 // Generate index page
 ejs.renderFile(`${Config.viewDir}/index.ejs`, { AllPieces: AllPiecesJS.map(pieceJS => {

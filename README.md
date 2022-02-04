@@ -5,7 +5,10 @@
 Source code for each piece can be found here:     
 [https://github.com/greeblethecat/genart/tree/main/view/js/pieces](https://github.com/greeblethecat/genart/tree/main/view/js/pieces)
 
-Useful commands:     
+Dev setup:     
 `$ npm install`     
-`$ npm run clean`     
-`$ npm run build`     
+
+Useful commands:     
+`$ npm run clean` - cleans generated pages     
+`$ npm run build` - builds web pages     
+`$ npm run watch` - starts server for web pages and watches source     

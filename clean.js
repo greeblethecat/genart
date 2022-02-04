@@ -1,3 +1,6 @@
+/**
+ * Clears out the github pages folder.
+ */
 const Config = require('./config');
 const fs = require('fs');
 console.log(`Deleting ${Config.outputDir}`);
