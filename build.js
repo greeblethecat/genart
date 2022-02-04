@@ -11,7 +11,7 @@ function setupOutputDirs() {
   console.log("Creating output directories");
   [ 'js',
     'styles',
-    'assets'
+    //'assets'
   ].forEach(dir => {
     execSync(`mkdir -p ${Config.outputDir}/${dir}`);
     exec(`cp -r ${Config.viewDir}/${dir}/* ${Config.outputDir}/${dir}`);
