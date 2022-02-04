@@ -1,0 +1,16 @@
+<component name="libraryTable">
+  <library name="client-side js" type="javaScript">
+    <properties>
+      <sourceFilesUrls>
+        <item url="file://$PROJECT_DIR$/view/js/vendor/p5" />
+        <item url="file://$PROJECT_DIR$/view/js/vendor/p5/p5.js" />
+      </sourceFilesUrls>
+    </properties>
+    <CLASSES>
+      <root url="file://$PROJECT_DIR$/view/js/vendor/p5" />
+      <root url="file://$PROJECT_DIR$/view/js/vendor/p5/p5.js" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

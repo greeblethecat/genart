@@ -4,17 +4,14 @@ const { exec, execSync } = require('child_process');
 const ejs = require('ejs');
 const AllPiecesJS = fs.readdirSync(`${Config.viewDir}/js/pieces`);
 
-console.log('AllPiecesJS', AllPiecesJS);
-
-// Setup output directories
+// Setup output directories and copy from view
+console.log("Creating output directories");
 [ 'js',
-  'js/pieces',
-  'js/vendor',
-  'js/lib',
   'styles',
   'assets'
 ].forEach(dir => {
-  execSync(`mkdir -p ${Config.outputDir + '/' + dir}`);
+  execSync(`mkdir -p ${Config.outputDir}/${dir}`);
+  exec(`cp -r ${Config.viewDir}/${dir}/* ${Config.outputDir}/${dir}`);
 });
 
 // Generate index page
@@ -43,11 +40,3 @@ AllPiecesJS.forEach(pieceJS => {
     });
   });
 });
-
-//console.log(AllPiecesJS);
-
-// Copy to output dir
-exec(`cp -r ${Config.viewDir}/js/* ${Config.outputDir}/js`);
-exec(`cp -r ${Config.viewDir}/assets/* ${Config.outputDir}/assets`);
-
-//console.log("build.js", AllPiecesJS);
