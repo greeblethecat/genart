@@ -1,9 +1,12 @@
 /**
- * Clears out the github pages folder.
+ * Clears out html from github pages folder.
  */
-const Config = require('./config');
+const docsDir = __dirname + '/docs';
 const fs = require('fs');
-console.log(`Deleting ${Config.outputDir}`);
-fs.rmSync(Config.outputDir, { recursive: true, force: true });
-console.log(`Creating empty ${Config.outputDir}`);
-fs.mkdirSync(Config.outputDir);
+const { execSync } = require('child_process');
+execSync(`rm ${docsDir}/*.html`)
+
+//console.log(`Deleting ${Config.outputDir}`);
+//fs.rmSync(Config.outputDir, { recursive: true, force: true });
+//console.log(`Creating empty ${Config.outputDir}`);
+//fs.mkdirSync(Config.outputDir);
