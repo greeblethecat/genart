@@ -5,6 +5,7 @@ const H = window.innerHeight;
 
 window.setup = () => {
   createCanvas(W, H);
+  background('white');
 };
 
 window.draw = () => {
