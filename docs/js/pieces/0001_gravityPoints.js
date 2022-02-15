@@ -1,10 +1,7 @@
 const w = window.innerWidth;
 const h = window.innerHeight;
-
 const AllPoints = [];
-let DrawnPoints = [];
-
-import { Transform } from '../lib/utils.js';
+const AveragePointScale = 25;
 
 window.setup = function() {
   createCanvas(w, h);
@@ -14,11 +11,16 @@ window.setup = function() {
   for (let i = 0; i < NumPieces; i++) {
     AllPoints.push(Point.CreateNewRandomPoint());
   }
-}
+};
 
-const AveragePointScale = 25;
 
-class Point extends Transform {
+class Point {
+
+  constructor(pos, scale = 1, rotation = null) {
+    this.pos = createVector(pos.x, pos.y);
+    this.scale = scale;
+    this.rotation = rotation;
+  }
 
   static CreateNewRandomPoint(scale) {
     return new Point({x: Math.random() * w, y: Math.random() * h}, Math.random() * AveragePointScale);
@@ -30,11 +32,6 @@ class Point extends Transform {
     // G - gravitational constant
     // m1, m2 - masses of objects
     // r - distance between the two objects
-  }
-
-  constructor(pos, scale = 1, initialVelocity = 0) {
-    super(pos, scale);
-    this.initialVelocity = initialVelocity;
   }
 
   draw() {
@@ -62,4 +59,4 @@ window.draw = function() {
     point.draw(AllPoints);
   });
   console.log('AllPoints.length=', AllPoints.length);
-}
+};

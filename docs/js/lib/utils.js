@@ -1,12 +1,11 @@
-export class Transform {
-  constructor(pos, scale = 1, rotation = null) {
-    this.name = name;
-    this.pos = createVector(pos.x, pos.y);
-    this.scale = scale;
-    this.rotation = rotation;
+export class Helpers {
+  static polygonPoints(numSides, radius, center = createVector(0, 0)) {
+    let points = [];
+    for (let i = 0; i < numSides; i++) {
+      let vertex = createVector(center.x + radius * Math.cos(2 * Math.PI * i / numSides),
+        center.y + radius * Math.sin(2 * Math.PI * i / numSides));
+      points.push(vertex)
+    }
+    return points;
   }
-
-  deltaVectorToMe(other) {
-    return createVector(other.pos.x - this.pos.x, other.pos.y - this.pos.y);
-  }
-};
+}
