@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="JavaScriptLibraryMappings">
-    <excludedPredefinedLibrary name="HTML" />
+    <file url="file://$PROJECT_DIR$/docs/js" libraries="{@types/p5, HTML}" />
+    <file url="PROJECT" libraries="{@types/p5}" />
   </component>
 </project>

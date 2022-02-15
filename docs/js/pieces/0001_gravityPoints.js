@@ -4,12 +4,14 @@ const h = window.innerHeight;
 const AllPoints = [];
 let DrawnPoints = [];
 
-function setup() {
+import { Transform } from '../lib/utils.js';
+
+window.setup = function() {
   createCanvas(w, h);
   //noLoop() // causes draw to be called only once
 
   const NumPieces = 64;
-  for (i = 0; i < NumPieces; i++) {
+  for (let i = 0; i < NumPieces; i++) {
     AllPoints.push(Point.CreateNewRandomPoint());
   }
 }
@@ -30,8 +32,8 @@ class Point extends Transform {
     // r - distance between the two objects
   }
 
-  constructor(pos, scale = 1, initialVelocity = 0, name = `Point #${Point.allInstances ? Point.allInstances.length : 0}`) {
-    super(name, pos, scale);
+  constructor(pos, scale = 1, initialVelocity = 0) {
+    super(pos, scale);
     this.initialVelocity = initialVelocity;
   }
 
@@ -43,7 +45,7 @@ class Point extends Transform {
 
 }
 
-function draw() {
+window.draw = function() {
   background(0, 0, 0);
 
   // Update the state for all points

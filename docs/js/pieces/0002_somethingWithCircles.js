@@ -1,7 +1,7 @@
 const w = window.innerWidth;
 const h = window.innerHeight;
 
-function setup() {
+window.setup = function() {
   createCanvas(w, h);
 }
 
@@ -9,7 +9,7 @@ let minRings = 8;
 let maxRings = 128;
 let count = minRings;
 let countPingPong = true;
-function draw() {
+window.draw = function() {
   background(0, 0, 0);
   let fromColor = color(0,0,255);
   let toColor = color(255,0,0); // center of orb
@@ -24,7 +24,7 @@ function draw() {
       countPingPong = true;
     }
   }
-  for (i = 0; i < count; i++) {
+  for (let i = 0; i < count; i++) {
     let color = lerpColor(fromColor, toColor, i/(count-1));
     fill(color);
     stroke('black');
