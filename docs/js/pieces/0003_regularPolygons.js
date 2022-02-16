@@ -1,7 +1,4 @@
-import { Helpers } from '../lib/utils.js';
-
-const W = window.innerWidth;
-const H = window.innerHeight;
+import { W, H, Helpers } from '../lib/utils.js';
 
 window.setup = () => {
   createCanvas(W, H);
