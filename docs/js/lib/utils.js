@@ -1,6 +1,8 @@
 export const W = window.innerWidth;
 export const H = window.innerHeight;
 
+
+
 export class Helpers {
   static polygonPoints(numSides, radius, center = createVector(0, 0)) {
     let points = [];
@@ -12,4 +14,27 @@ export class Helpers {
     return points;
   }
 
+  static shuffle(array) {
+    for (let i = array.length - 1; i > 0; i--) {
+      let j = Math.floor(Math.random() * (i + 1));
+      [array[i], array[j]] = [array[j], array[i]];
+    }
+    return array;
+  }
+
+  static getQueryParms() {
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    return urlParams;
+  }
+
+  static ToQueryParmsString(...args) {
+    let str = '';
+    for (let i = 0; i < args.length; i+=2) {
+      if (i === 0) str += '?';
+      else str += '&';
+      str += `${args[i]}=${args[i+1]}`;
+    }
+    return str;
+  }
 }
