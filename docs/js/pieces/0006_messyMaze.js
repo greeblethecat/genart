@@ -2,6 +2,8 @@ import {W, H, Helpers} from '../lib/utils.js';
 import * as colors from '../lib/colors.js';
 
 const cellSize = Helpers.getQueryParms().get('size') || 16;
+if (!Helpers.getQueryParms().get('size')) window.location.replace(window.location + Helpers.ToQueryParmsString('size', cellSize));
+
 const cellWallStrokeWeight = cellSize / 5;
 let grid;
 let startNode;
@@ -154,7 +156,6 @@ const palette = {};
 
 const AllNodes = [];
 window.setup = () => {
-  if (!Helpers.getQueryParms().get('size')) window.location.replace(window.location + Helpers.ToQueryParmsString('size', cellSize));
   c = colors.setup();
   palette.wall = 'black';
   palette.background = c.pear36.darkPurple;
