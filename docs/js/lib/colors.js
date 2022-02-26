@@ -1,5 +1,10 @@
+let c = {};
+export const Colors = c;
+Colors.setup = setup;
+
 export function setup() {
-  return {
+  c = {
+    setup: setup,
     pear36: {
       color1: color('#5e315b'),
       orientPink: color('#8c3f5d'),
@@ -39,4 +44,6 @@ export function setup() {
       color36: color('#ffb5b5'),
     }
   };
+  Object.assign(Colors, c);
+  return c;
 }
