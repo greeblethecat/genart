@@ -1,5 +1,5 @@
 import { W, H} from '../lib/helpers.js';
-import {polygonPoints} from '../lib/geometry';
+import {polygonPoints} from '../lib/geometry.js';
 
 window.setup = () => {
   createCanvas(W, H);
