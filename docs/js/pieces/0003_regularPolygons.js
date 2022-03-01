@@ -1,4 +1,5 @@
-import { W, H, Helpers } from '../lib/utils.js';
+import { W, H} from '../lib/helpers.js';
+import {polygonPoints} from '../lib/geometry';
 
 window.setup = () => {
   createCanvas(W, H);
@@ -8,9 +9,9 @@ window.setup = () => {
 window.draw = () => {
   let levels = 32;
   for (let sides = 3; sides < levels; sides++) {
-    let polygonPoints = Helpers.polygonPoints(sides,10*sides, { x: W/2, y: H/2});
-    let prevPoint = polygonPoints.at(-1)
-    polygonPoints.forEach(p => {
+    let points = polygonPoints(sides,10*sides, { x: W/2, y: H/2});
+    let prevPoint = points.at(-1)
+    points.forEach(p => {
       strokeWeight(lerp(10, 0, sides/levels));
       line(prevPoint.x, prevPoint.y, p.x, p.y);
       prevPoint = p;

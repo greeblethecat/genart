@@ -1,4 +1,4 @@
-import {W, H} from '../lib/utils.js';
+import {W, H} from '../lib/helpers.js';
 import * as colors from '../lib/colors.js';
 
 function createArray(length) {

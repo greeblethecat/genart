@@ -1,4 +1,4 @@
-import {W, H, Helpers} from '../lib/utils.js';
+import {W, H, Helpers} from '../lib/helpers.js';
 import * as colors from '../lib/colors.js';
 
 const cellSize = Helpers.getQueryParams().get('size') || 16;
