@@ -1,15 +1,15 @@
 import {Colors} from '../lib/colors.js';
 import {H, Helpers, W} from '../lib/utils.js';
 
-if (!Helpers.getQueryParms().get('count')) {
-  window.location.replace(window.location + Helpers.ToQueryParmsString('count', 10))
-}
-const count = Helpers.getQueryParms().get('count');
+const opts = Helpers.setupQueryParams({
+  seed: 'foobar',
+});
+const random = new Math.seedrandom(opts.seed);
 
 window.setup = () => {
-  Colors.setup();
+  Colors.setup('pear36');
   createCanvas(W, H);
-  background(Colors.pear36.black);
+  background(Colors.orientPink);
 };
 window.draw = () => {
 };

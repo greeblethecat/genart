@@ -22,13 +22,13 @@ export class Helpers {
     return array;
   }
 
-  static getQueryParms() {
+  static getQueryParams() {
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     return urlParams;
   }
 
-  static ToQueryParmsString(...args) {
+  static argsPairsToQueryParamsString(...args) {
     let str = '';
     for (let i = 0; i < args.length; i+=2) {
       if (i === 0) str += '?';
@@ -36,5 +36,26 @@ export class Helpers {
       str += `${args[i]}=${args[i+1]}`;
     }
     return str;
+  }
+
+  static setupQueryParams(defaults) {
+    let obj = Object.assign({}, defaults);
+    let queryParams = this.getQueryParams();
+    let replaceLocation = false;
+    Object.keys(defaults).forEach(key => {
+      let queryParamValue = queryParams.get(key);
+      if (!queryParamValue) {
+        replaceLocation = true;
+      } else {
+        obj[key] = queryParamValue;
+      }
+    });
+    if (replaceLocation) {
+      let location = window.location.toString().split("?")[0];
+      window.location.replace(location + this.argsPairsToQueryParamsString(
+        ...Object.entries(obj).flat()
+      ));
+    }
+    return obj;
   }
 }

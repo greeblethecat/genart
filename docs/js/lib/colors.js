@@ -2,9 +2,8 @@ let c = {};
 export const Colors = c;
 Colors.setup = setup;
 
-export function setup() {
+export function setup(palette = null) {
   c = {
-    setup: setup,
     pear36: {
       color1: color('#5e315b'),
       orientPink: color('#8c3f5d'),
@@ -22,7 +21,7 @@ export function setup() {
       color14: color('#4da6ff'),
       color15: color('#66ffe3'),
       white: color('#ffffeb'),
-      color17: color('#c2c2d1'),
+      lighterGrey: color('#c2c2d1'),
       lightGrey: color('#7e7e8f'),
       grey: color('#606070'),
       darkGrey: color('#43434f'),
@@ -42,8 +41,14 @@ export function setup() {
       color34: color('#bd4882'),
       color35: color('#ff6b97'),
       color36: color('#ffb5b5'),
-    }
+    },
+    setup: setup,
   };
+  if (palette != null) {
+    Object.keys(c[palette]).forEach(key => {
+      c[key] = c[palette][key];
+    });
+  }
   Object.assign(Colors, c);
   return c;
 }
