@@ -1,27 +1,23 @@
 export class Transform {
   static allTransforms = [];
 
-  static defaultOpts = {
-    x: 0, y: 0, z: 0,
-    parent: undefined,
-  };
-
-  constructor(opts = Transform.defaultOpts) {
-    this.x = 0;
-    this.y = 0;
-    this.z = 0; // Probably just sort before calling draw
-    this.worldZ = 0;
-    this.scaleX = undefined;
-    this.scaleY = undefined;
-    this.rotation = 0;
-    this.localRotation = 0;
-    this.updateFunc = undefined;
-    this.drawFunc = undefined;
-    this.parent = undefined;
+  constructor(opts = {}) {
+    this.x = opts.x || 0;
+    this.y = opts.y || 0;
+    this.z = opts.z || 0;
+    this.worldZ = this.z;
+    this.rotation = opts.rotation || 0;
     this.children = [];
+    this.ancestors = [];
+    this.parent = opts.parent || undefined;
+
     Object.entries(opts).forEach((entry) => {
-      this[entry[0]] = entry[1];
+      let [key, value] = entry;
+      if (!this[key]) {
+        this[key] = value;
+      }
     });
+
     Transform.allTransforms.push(this);
   }
 
@@ -30,12 +26,18 @@ export class Transform {
   }
 
   set parent(value) {
+    this.setParent(value);
+  }
+
+  setParent(value) {
+    // Remove this as child from any existing parent.
     if (this._parent) {
-      this._parent.children.remove(this);
+      this._parent.children = this._parent.children.filter(child => child !== this);
     }
     this._parent = value;
     if (this._parent) {
       this._parent.children.push(this);
+      this.ancestors = this._parent.ancestors.concat([this._parent]);
 
       this.worldZ = this.z;
       let p = this._parent;
@@ -47,13 +49,14 @@ export class Transform {
   }
 
   static drawAll() {
+    // Call all updates before drawing
     Transform.allTransforms.forEach(t => {
       if (t.updateFunc) {
         t.updateFunc.bind(t).call();
       }
     });
 
-    // Draw in order of worldZ.
+    // Draw all transforms in order of worldZ.
     Transform.allTransforms
       .sort((a, b) => b.worldZ - a.worldZ)
       .forEach(t => {
@@ -66,8 +69,14 @@ export class Transform {
       this.parent.doTranslations();
     }
     if (this.x || this.y) {
-      translate(this.x, this.y);
+      translate(this.x || 0, this.y || 0);
     }
+    if (this.rotation) {
+      rotate(this.rotation);
+    }
+    //let rotation = this.ancestors.map(ancestor => ancestor.rotation || 0)
+    //  .reduce((prev, rot) => prev += rot, this.rotation);
+    //rotate(rotation);
   }
 
   draw() {
