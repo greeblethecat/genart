@@ -100,17 +100,17 @@ window.setup = () => {
   const clockSize = clockSpacing * 2.667*1.05;
   const clocksW = W/clockSize + 1;
   const clocksH = H/clockSize + 1;
-  const foobar = PI;
+  const foobar = PI/(Math.E/2);
   for (let i = 0; i < clocksW; i++) {
     for (let j = 0; j < clocksH; j++) {
-      if (i % 2 == 0) {
-        if (j % 2 == 0) {
+      if (i % 2 === 0) {
+        if (j % 2 === 0) {
           createClock(i*clockSize, j*clockSize, clockSpacing+clockSpacing/foobar);
         } else {
           createClock(i*clockSize, j*clockSize, clockSpacing-clockSpacing/foobar);
         }
       } else {
-        if (j%2==0) {
+        if (j%2===0) {
           createClock(i*clockSize, j*clockSize, clockSpacing-clockSpacing/foobar);
         } else {
           createClock(i*clockSize, j*clockSize, clockSpacing+clockSpacing/foobar);
