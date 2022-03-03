@@ -1,9 +1,13 @@
 let c = {};
-export const Colors = c;
-Colors.setup = setup;
+export const colors = c;
+export default c;
+colors.setup = setup;
 
-export function setup(palette = null) {
-  c = {
+export function setup(defaultPalette = null, loadAll = true) {
+  const AllPalettes = {
+    /**
+     * Manually add palettes here...
+     */
     pear36: {
       color1: color('#5e315b'),
       orientPink: color('#8c3f5d'),
@@ -41,14 +45,20 @@ export function setup(palette = null) {
       pink: color('#bd4882'),
       lightPink: color('#ff6b97'),
       color36: color('#ffb5b5'),
-    },
-    setup: setup,
-  };
-  if (palette != null) {
-    Object.keys(c[palette]).forEach(key => {
-      c[key] = c[palette][key];
+    }
+  }
+  c = { setup: setup };
+  Object.keys(AllPalettes).forEach(k => {
+    c[k] = AllPalettes[k]
+    // TODO: If a value in AllPalettes is a function, then run it and replace the value of the key on c with the return.
+  })
+
+
+  if (defaultPalette != null) {
+    Object.keys(c[defaultPalette]).forEach(key => {
+      c[key] = c[defaultPalette][key];
     });
   }
-  Object.assign(Colors, c);
+  Object.assign(colors, c);
   return c;
 }

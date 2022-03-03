@@ -1,20 +1,20 @@
-import {Colors} from '../lib/colors.js';
+import {colors} from '../lib/colors.js';
 import {Helpers, W} from '../lib/helpers.js';
 import {Transform} from '../lib/transform.js';
 
 const opts = Helpers.setupQueryParams({seed: 'foobar'});
 
 export default new Helpers.Piece(function () {
-  Colors.setup('pear36');
+  colors.setup('pear36');
   const random = new Math.seedrandom(opts.seed);
   rectMode(CORNER);
   let time = 0;
 
   const NUM_STARS = 512;
-  const BG_COLOR = Colors.redPink;
-  const BIG_STAR_COLOR = Colors.darkOrange;
-  const SMALL_STAR_COLOR = Colors.pear36.color26;
-  const SMALLEST_STAR_COLOR = Colors.white;
+  const BG_COLOR = colors.redPink;
+  const BIG_STAR_COLOR = colors.darkOrange;
+  const SMALL_STAR_COLOR = colors.pear36.color26;
+  const SMALLEST_STAR_COLOR = colors.white;
   const MAX_STAR_SIZE = W / 4;
   const MIN_STAR_SIZE = 10;
 

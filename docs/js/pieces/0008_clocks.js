@@ -1,14 +1,14 @@
 import {H, W, Helpers} from '../lib/helpers.js';
-import {Colors} from '../lib/colors.js';
+import {colors} from '../lib/colors.js';
 import {Transform} from '../lib/transform.js';
 import {polygonPoints} from '../lib/geometry.js';
 
 export default new Helpers.Piece(() => {
   Helpers.setupP5();
 
-  Colors.setup('pear36');
-  Colors.Background = Colors.purple;
-  background(Colors.Background);
+  colors.setup('pear36');
+  colors.Background = colors.purple;
+  background(colors.Background);
 
   function createClock(x, y, size=200) {
     const clock = new Transform({x: x, y: y});
@@ -25,7 +25,7 @@ export default new Helpers.Piece(() => {
       },
       drawFunc() {
         strokeWeight(0);
-        fill(Colors.black);
+        fill(colors.black);
         rect(0,this.length/2-pivotOffset,handWidth,this.length);
       },
     });
@@ -39,7 +39,7 @@ export default new Helpers.Piece(() => {
       },
       drawFunc() {
         strokeWeight(0);
-        fill(Colors.black)
+        fill(colors.black)
         rect(0,this.length/2-pivotOffset,handWidth/2,this.length);
       },
     });
@@ -53,7 +53,7 @@ export default new Helpers.Piece(() => {
       },
       drawFunc() {
         strokeWeight(0);
-        fill(Colors.red)
+        fill(colors.red)
         rect(0,this.length/2-pivotOffset,handWidth/4,this.length);
       },
     });
@@ -62,9 +62,9 @@ export default new Helpers.Piece(() => {
       parent: clock,
       drawFunc() {
         strokeWeight(0);
-        fill(Colors.black);
+        fill(colors.black);
         circle(0,0,hoursLength*2.667*1.05);
-        fill(Colors.white);
+        fill(colors.white);
         circle(0,0,hoursLength*2.667);
       }
     });
@@ -76,7 +76,7 @@ export default new Helpers.Piece(() => {
         parent: faceBG,
         drawFunc() {
           strokeWeight(handWidth);
-          stroke(Colors.black);
+          stroke(colors.black);
           point(0,0);
         },
       });
@@ -88,7 +88,7 @@ export default new Helpers.Piece(() => {
         parent: faceBG,
         drawFunc() {
           strokeWeight(handWidth/4);
-          stroke(Colors.black);
+          stroke(colors.black);
           point(0,0);
         },
       });
@@ -120,7 +120,7 @@ export default new Helpers.Piece(() => {
   }
 
   window.draw = () => {
-    background(Colors.Background);
+    background(colors.Background);
     Transform.drawAll();
   };
 });

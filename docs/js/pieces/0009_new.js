@@ -1,4 +1,5 @@
-import {Helpers} from '../lib/helpers.js'
+import {Helpers, Colors} from '../lib/helpers.js'
 
-export default new Helpers.Piece(() => {
+export default Helpers.Setup(() => {
+  background(Colors.pear36.red);
 })

@@ -1,12 +1,18 @@
-import {Colors} from './colors.js'
+import {colors} from './colors.js'
 
 export const W = window.innerWidth;
 export const H = window.innerHeight;
+
+export const Colors = colors;
 
 export class Helpers {
 
   static W = W;
   static H = H;
+
+  static Setup(setupFunc) {
+    return new this.Piece(setupFunc);
+  }
 
   static Piece = class {
 
@@ -44,7 +50,7 @@ export class Helpers {
     createCanvas(W, H);
     rectMode(CENTER);
     angleMode(DEGREES)
-    Colors.setup();
+    colors.setup();
   }
 
   static shuffle(array) {
