@@ -1,12 +1,50 @@
+import {Colors} from './colors.js'
+
 export const W = window.innerWidth;
 export const H = window.innerHeight;
 
 export class Helpers {
 
+  static W = W;
+  static H = H;
+
+  static Piece = class {
+
+    constructor(opts = {}) {
+      if (typeof(opts) === 'function') {
+        opts = { setup: opts };
+      }
+      this.setup = () => {
+        Helpers.setupP5();
+        opts.setup();
+      }
+
+      // draw is optional and can be set within setup, so don't set draw if one is not present.
+      this.draw = opts.draw ? () => {
+        opts.draw();
+      } : undefined;
+      this.foobar = 'foobar';
+
+      this.setupPiece();
+    }
+
+    setupPiece() {
+      console.log('setting up piece', this);
+      if (this.setup) {
+        window.setup = this.setup;
+      }
+      if (this.draw) {
+        window.draw = this.draw;
+      }
+    }
+
+  }
+
   static setupP5() {
-    createCanvas(W,H);
+    createCanvas(W, H);
     rectMode(CENTER);
     angleMode(DEGREES)
+    Colors.setup();
   }
 
   static shuffle(array) {
@@ -47,5 +85,20 @@ export class Helpers {
       ));
     }
     return opts;
+  }
+
+  static createArray(length) {
+    let arr = new Array(length || 0),
+      i = length;
+
+    if (arguments.length > 1) {
+      let args = Array.prototype.slice.call(arguments, 1);
+      while (i--) {
+        let idx = length - 1 - i;
+        arr[idx] = Helpers.createArray.apply(this, args);
+      }
+    }
+
+    return arr;
   }
 }

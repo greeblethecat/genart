@@ -1,18 +1,9 @@
+import {Helpers} from '../lib/helpers.js'
+
 const w = window.innerWidth;
 const h = window.innerHeight;
 const AllPoints = [];
 const AveragePointScale = 25;
-
-window.setup = function() {
-  createCanvas(w, h);
-  //noLoop() // causes draw to be called only once
-
-  const NumPieces = 64;
-  for (let i = 0; i < NumPieces; i++) {
-    AllPoints.push(Point.CreateNewRandomPoint());
-  }
-};
-
 
 class Point {
 
@@ -42,21 +33,31 @@ class Point {
 
 }
 
-window.draw = function() {
-  background(0, 0, 0);
+export default new Helpers.Piece({
+  setup() {
+    const NumPieces = 64;
+    for (let i = 0; i < NumPieces; i++) {
+      AllPoints.push(Point.CreateNewRandomPoint());
+    }
+  },
 
-  // Update the state for all points
-  AllPoints.forEach((point, index) => {
-    AllPoints.forEach(otherPoint => {
-      if (point !== otherPoint) {
-        let F = (point.scale * otherPoint.scale) / (dist(point.pos.x, point.pos.y, otherPoint.pos.x, otherPoint.pos.y));
-        otherPoint.pos.lerp(point.pos, F * 0.00001 * deltaTime);
-      }
+  draw() {
+    background(0, 0, 0);
+
+    // Update the state for all points
+    AllPoints.forEach((point, index) => {
+      AllPoints.forEach(otherPoint => {
+        if (point !== otherPoint) {
+          let F = (point.scale * otherPoint.scale) / (dist(point.pos.x, point.pos.y, otherPoint.pos.x, otherPoint.pos.y));
+          otherPoint.pos.lerp(point.pos, F * 0.00001 * deltaTime);
+        }
+      });
     });
-  });
 
-  AllPoints.forEach(point => {
-    point.draw(AllPoints);
-  });
-  console.log('AllPoints.length=', AllPoints.length);
-};
+    AllPoints.forEach(point => {
+      point.draw(AllPoints);
+    });
+    console.log('AllPoints.length=', AllPoints.length);
+  }
+})
+

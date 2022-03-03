@@ -3,7 +3,7 @@ import {Colors} from '../lib/colors.js';
 import {Transform} from '../lib/transform.js';
 import {polygonPoints} from '../lib/geometry.js';
 
-window.setup = () => {
+export default new Helpers.Piece(() => {
   Helpers.setupP5();
 
   Colors.setup('pear36');
@@ -123,4 +123,4 @@ window.setup = () => {
     background(Colors.Background);
     Transform.drawAll();
   };
-};
+});

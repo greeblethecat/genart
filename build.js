@@ -20,8 +20,8 @@ function setupOutputDirs() {
 }
 
 // Generate index page
-function renderIndexPage() {
-  console.log("Rendering index page");
+function renderIndexPage(verbose = true) {
+  if (verbose) console.log("Rendering index page");
   ejs.renderFile(`${docsDir}/index.ejs`, { AllPieces: AllPiecesJS.map(pieceJS => {
       return {
         id: pieceJS.split('_')[0],
@@ -35,8 +35,8 @@ function renderIndexPage() {
   });
 }
 
-function renderPiece(pieceJS) {
-  console.log(`Rendering page for piece ${pieceJS}`);
+function renderPiece(pieceJS, verbose=true) {
+  if (verbose) console.log(`Rendering page for piece ${pieceJS}`);
   let piece = {
     id: pieceJS.split('_')[0],
     jsName: pieceJS,
@@ -48,9 +48,9 @@ function renderPiece(pieceJS) {
     });
   });
 }
-function renderAllPieces() {
-  console.log('Rendering pages for all pieces');
-  AllPiecesJS.forEach(renderPiece);
+function renderAllPieces(verbose=true) {
+  if (verbose) console.log('Rendering pages for all pieces');
+  AllPiecesJS.forEach((piece) => renderPiece(piece, verbose));
 }
 
 setupOutputDirs();

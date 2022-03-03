@@ -8,8 +8,14 @@ const cellWallStrokeWeight = cellSize / 5;
 let grid;
 let startNode;
 let endNode;
-let curNode;
 let c;
+const palette = {};
+const AllNodes = [];
+let debugPoints = [];
+let path3 = [];
+let path2 = [];
+let path = [];
+
 
 class GridNode {
   constructor(x, y, grid) {
@@ -152,18 +158,33 @@ function numSetsContaining(node1, node2) {
   }
 }
 
-const palette = {};
+function drawPath(p, index, color) {
+  let i = index;
+  strokeWeight(lerp(1, grid.cellSize / 4, i / p.length));
+  stroke(color);
+  line(p[i - 1].worldX, p[i - 1].worldY, p[i].worldX, p[i].worldY);
+  strokeWeight(cellSize - cellWallStrokeWeight * 2);
+  if (p != path3) {
+    point(startNode.worldX, startNode.worldY);
+  }
+  if (p === path2) {
+    stroke(palette.path1);
+  } else if (p === path3) {
+    stroke(palette.path2);
+  } else if (p === path) {
+    stroke(palette.wall);
+  }
+  point(endNode.worldX, endNode.worldY);
+  return index + 1;
+}
 
-const AllNodes = [];
-window.setup = () => {
+export default new Helpers.Piece(() => {
   c = colors.setup();
   palette.wall = 'black';
   palette.background = c.pear36.darkPurple;
   palette.path1 = c.pear36.purple;
   palette.path2 = c.pear36.yellow;
   palette.path3 = c.pear36.red;
-  createCanvas(W, H);
-  angleMode(DEGREES);
   grid = new Grid(Math.floor(W / cellSize), Math.floor(H / cellSize), cellSize, (i, j, grid) => new GridNode(i, j, grid));
   startNode = grid.nodes[0][0];
   endNode = grid.nodes[grid.w - 1][grid.h - 1];
@@ -193,8 +214,6 @@ window.setup = () => {
     }
   }
 
-  console.log('allSets', allSets().length, 'numSetsContaining', numSetsContaining(startNode, endNode));
-
   path = [];
   let cur;
   let unvisited = [startNode];
@@ -209,51 +228,32 @@ window.setup = () => {
     unvisited = unvisited.concat(possible);
   }
   path.push(endNode);
-  console.log('Path has ', path.length, ' nodes.');
 
-  console.log('Optimizing path.');
-
-  function removeCycles() {
-    path2 = [];
-    for (let i = 0; i < path.length; i++) {
-      let cycled = false;
-      let skipIndex = 0;
-      for (let j = i + 2; j < path.length; j++) {
-        if (path[i].connectedAdjacent.includes(path[j])) {
-          cycled = true;
-          skipIndex = j;
-        }
-      }
-      path2.push(path[i]);
-      if (cycled) {
-        path2.push(path[skipIndex]);
-        i = skipIndex;
+  path2 = [];
+  for (let i = 0; i < path.length; i++) {
+    let cycled = false;
+    let skipIndex = 0;
+    for (let j = i + 2; j < path.length; j++) {
+      if (path[i].connectedAdjacent.includes(path[j])) {
+        cycled = true;
+        skipIndex = j;
       }
     }
-
-    //console.log('Path2 has ', path2.length, ' nodes.');
-    background(palette.background);
+    path2.push(path[i]);
+    if (cycled) {
+      path2.push(path[skipIndex]);
+      i = skipIndex;
+    }
   }
 
-  removeCycles();
-  console.log('Path2 has ', path2.length, ' nodes.');
+  background(palette.background);
 
   debugPoints = path2.filter((n, i) => {
     if (i === 0) return false;
     return !path2[i].connectedAdjacent.includes(path2[i - 1]);
   });
-  console.log('debugPoints has', debugPoints.length, ' debug points.');
 
-  //path2.forEach((node, index) => {
-  //  if (debugPoints.includes(node)) {
-  //    let start = path2[index - 1];
-  //    let end = node;
-  //  } else {
-  //    path3.push(node);
-  //  }
-  //});
   path3 = debugPoints;
-  console.log('Path3 has ', path3.length, ' nodes.');
 
   translate(cellWallStrokeWeight / 2, cellWallStrokeWeight / 2);
   path.forEach((node, i) => {
@@ -285,77 +285,4 @@ window.setup = () => {
     point(p.worldX, p.worldY);
   });
 
-};
-
-let debugPoints = [];
-let path3 = [];
-let path2 = [];
-let path = [];
-let i = 1;
-let i2 = 1;
-let i3 = 1;
-
-function drawPath(p, index, color) {
-  let i = index;
-  strokeWeight(lerp(1, grid.cellSize / 4, i / p.length));
-  stroke(color);
-  line(p[i - 1].worldX, p[i - 1].worldY, p[i].worldX, p[i].worldY);
-  //strokeWeight(0);
-  //fill(color);
-  //square(startNode.worldX - cellSize / 2, startNode.worldY - cellSize / 2, cellSize);
-  strokeWeight(cellSize - cellWallStrokeWeight * 2);
-  if (p != path3) {
-    point(startNode.worldX, startNode.worldY);
-  }
-  if (p === path2) {
-    stroke(palette.path1);
-  } else if (p === path3) {
-    stroke(palette.path2);
-  } else if (p === path) {
-    stroke(palette.wall);
-  }
-  point(endNode.worldX, endNode.worldY);
-  //square(endNode.worldX - cellSize / 2, endNode.worldY - cellSize / 2, cellSize);
-  return index + 1;
-}
-
-window.drawOld = () => {
-  translate(cellWallStrokeWeight / 2, cellWallStrokeWeight / 2);
-  if (i < path.length) {
-    i = drawPath(path, i, palette.path1);
-  }
-  if (i >= path.length && i2 < path2.length) {
-    i2 = drawPath(path2, i2, palette.path2);
-  }
-  if (i2 >= path2.length && i3 < path3.length) {
-    i3 = drawPath(path3, i3, palette.path3);
-  }
-  if (i3 >= path3.length) {
-    //strokeWeight(0);
-    //fill(palette.path3);
-    //square(startNode.worldX - cellSize / 2, startNode.worldY - cellSize / 2, cellSize);
-    //square(endNode.worldX - cellSize / 2, endNode.worldY - cellSize / 2, cellSize);
-    //stroke(palette.path3);
-    strokeWeight(cellSize - cellWallStrokeWeight * 2);
-    //point(startNode.worldX, startNode.worldY);
-    stroke(palette.path2);
-    point(endNode.worldX, endNode.worldY);
-  }
-
-
-  stroke(palette.wall);
-  strokeWeight(cellWallStrokeWeight);
-  fill(0, 0, 0, 0);
-  for (let i = 0; i < grid.w; i++) {
-    for (let j = 0; j < grid.h; j++) {
-      let node = grid.nodes[i][j];
-      node.drawWalls();
-    }
-  }
-
-  debugPoints.forEach(p => {
-    strokeWeight(cellSize / 4);
-    stroke(palette.path3);
-    point(p.worldX, p.worldY);
-  });
-};
+});

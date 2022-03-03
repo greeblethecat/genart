@@ -1,14 +1,13 @@
 import {Colors} from '../lib/colors.js';
-import {H, Helpers, W} from '../lib/helpers.js';
+import {Helpers, W} from '../lib/helpers.js';
 import {Transform} from '../lib/transform.js';
 
 const opts = Helpers.setupQueryParams({seed: 'foobar'});
 
-window.setup = function () {
+export default new Helpers.Piece(function () {
   Colors.setup('pear36');
   const random = new Math.seedrandom(opts.seed);
-  angleMode(DEGREES);
-  createCanvas(W, H);
+  rectMode(CORNER);
   let time = 0;
 
   const NUM_STARS = 512;
@@ -62,7 +61,7 @@ window.setup = function () {
         // Wrap along the X
         if (deltaX > 0 && this.x >= width / 2 + diagonal / 2) {
           this.x = -width / 2 - diagonal / 2;
-        } else if (deltaX < 0 && this.x <= -width/ 2 - diagonal / 2) {
+        } else if (deltaX < 0 && this.x <= -width / 2 - diagonal / 2) {
           this.x = width / 2 + diagonal / 2;
         }
 
@@ -108,4 +107,4 @@ window.setup = function () {
     Transform.drawAll();
   };
 
-};
+});
