@@ -1,4 +1,4 @@
-import {colors} from './colors.js'
+import {colors} from './colors.js';
 
 export const W = window.innerWidth;
 export const H = window.innerHeight;
@@ -10,46 +10,48 @@ export class Helpers {
   static W = W;
   static H = H;
 
-  static Setup(setupFunc) {
-    return new this.Piece(setupFunc);
-  }
-
   static Piece = class {
 
-    constructor(opts = {}) {
-      if (typeof(opts) === 'function') {
-        opts = { setup: opts };
-      }
-      this.setup = () => {
+    initialize(opts) {
+      this.setup = function() {
         Helpers.setupP5();
         opts.setup();
-      }
+      };
 
       // draw is optional and can be set within setup, so don't set draw if one is not present.
-      this.draw = opts.draw ? () => {
-        opts.draw();
-      } : undefined;
-      this.foobar = 'foobar';
+      this.draw = opts.draw ? opts.draw : undefined;
 
       this.setupPiece();
     }
 
+    constructor(...args) {
+      let opts = args[0];
+      if (typeof(args[0]) === 'function') {
+        opts = {};
+        opts.setup = args[0];
+        if (typeof(args[1]) === 'function') {
+          opts.draw = args[1];
+        }
+      }
+      this.initialize(opts);
+    }
+
     setupPiece() {
-      console.log('setting up piece', this);
       if (this.setup) {
         window.setup = this.setup;
       }
       if (this.draw) {
         window.draw = this.draw;
       }
+      console.log(this);
     }
 
-  }
+  };
 
-  static setupP5() {
-    createCanvas(W, H);
+  static setupP5(renderer = P2D) {
+    createCanvas(W, H, renderer);
     rectMode(CENTER);
-    angleMode(DEGREES)
+    angleMode(DEGREES);
     colors.setup();
   }
 
@@ -107,4 +109,8 @@ export class Helpers {
 
     return arr;
   }
+
+  static clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 }
+
+export const Piece = Helpers.Piece;

@@ -10,9 +10,17 @@ export class Transform {
     this.children = [];
     this.ancestors = [];
     this.parent = opts.parent || undefined;
+    this.drawFunc = undefined;
+    this.updateFunc = undefined;
 
     Object.entries(opts).forEach((entry) => {
       let [key, value] = entry;
+      if (key === 'draw') {
+        key = 'drawFunc';
+      }
+      if (key === 'update') {
+        key = 'updateFunc';
+      }
       if (!this[key]) {
         this[key] = value;
       }

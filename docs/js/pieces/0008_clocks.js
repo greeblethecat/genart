@@ -1,11 +1,9 @@
-import {H, W, Helpers} from '../lib/helpers.js';
+import {H, W, Helpers, Piece} from '../lib/helpers.js';
 import {colors} from '../lib/colors.js';
 import {Transform} from '../lib/transform.js';
 import {polygonPoints} from '../lib/geometry.js';
 
-export default new Helpers.Piece(() => {
-  Helpers.setupP5();
-
+export default new Piece(() => {
   colors.setup('pear36');
   colors.Background = colors.purple;
   background(colors.Background);
@@ -118,9 +116,7 @@ export default new Helpers.Piece(() => {
       }
     }
   }
-
-  window.draw = () => {
-    background(colors.Background);
-    Transform.drawAll();
-  };
+}, () => {
+  background(colors.Background);
+  Transform.drawAll();
 });
