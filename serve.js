@@ -2,9 +2,9 @@
  * Starts web server to serve the github pages app locally and then
  * watches source code files, rebuilding the project when they are changed.
  */
-import build from './build.js'; // watch depends on build
+import './clean.js'; // this depends on clean
+import build from './build.js'; // this depends on build
 import express from 'express';
-import {exec} from 'child_process';
 import readline from 'readline';
 
 const DocsDir = './docs';
@@ -14,7 +14,6 @@ app.use('/genart', express.static(DocsDir));
 app.listen(Port);
 
 console.log(`Now serving: http://localhost:${Port}/genart`);
-
 
 function askQuestion(query) {
   const rl = readline.createInterface({
@@ -32,6 +31,7 @@ function askQuestion(query) {
   console.log('Press enter to rebuild all pages.');
   while (true) {
     let response = await askQuestion("");
+    await import('./clean.js'); // this depends on clean
     build.renderAllPieces(false);
     build.renderIndexPage(false);
     console.log(Date.now(), 'rebuilt all pages.');
