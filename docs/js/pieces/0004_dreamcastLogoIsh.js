@@ -1,7 +1,7 @@
-import {W, H, Helpers} from '../lib/helpers.js';
+import {W, H, Helpers} from '../lib/p5/helpers.js';
 
 let shapeSpiral = [];
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
     background(0);
     let c1 = color('red');

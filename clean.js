@@ -1,9 +1,9 @@
 /**
  * Clears out html from github pages folder.
  */
-const docsDir = __dirname + '/docs';
-const fs = require('fs');
-const { execSync } = require('child_process');
+const docsDir = './docs';
+import fs from 'fs';
+import { execSync } from 'child_process';
 execSync(`rm ${docsDir}/*.html`)
 
 //console.log(`Deleting ${Config.outputDir}`);

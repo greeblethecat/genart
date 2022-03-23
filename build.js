@@ -1,10 +1,10 @@
 /**
  * Generates web pages and publishes them to the github pages folder.
  */
-const docsDir = __dirname + '/docs';
-const fs = require('fs');
-const { exec, execSync } = require('child_process');
-const ejs = require('ejs');
+const docsDir = './docs';
+import fs from 'fs';
+import { exec, execSync } from 'child_process';
+import ejs from 'ejs';
 const AllPiecesJS = fs.readdirSync(`${docsDir}/js/pieces`);
 
 function setupOutputDirs() {
@@ -35,15 +35,16 @@ function renderIndexPage(verbose = true) {
   });
 }
 
-function renderPiece(pieceJS, verbose=true) {
+async function renderPiece(pieceJS, verbose=true) {
   if (verbose) console.log(`Rendering page for piece ${pieceJS}`);
-  let piece = {
+  const piece = await import('./docs/js/pieces/' + pieceJS);
+  let pieceObj = {
     id: pieceJS.split('_')[0],
     jsName: pieceJS,
   };
-  ejs.renderFile(`${docsDir}/piece.ejs`, { piece: piece }, {}, (err, str) => {
+  ejs.renderFile(`${docsDir}/piece.ejs`, { piece: pieceObj }, {}, (err, str) => {
     if (err) { throw err; }
-    fs.writeFile(`${docsDir}/${piece.id}.html`, str, err => {
+    fs.writeFile(`${docsDir}/${pieceObj.id}.html`, str, err => {
       if (err) { throw err; }
     });
   });
@@ -57,7 +58,7 @@ setupOutputDirs();
 renderIndexPage();
 renderAllPieces();
 
-module.exports = {
+export default {
   renderIndexPage: renderIndexPage,
   renderPiece: renderPiece,
   renderAllPieces: renderAllPieces,

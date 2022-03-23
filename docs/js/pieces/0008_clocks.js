@@ -1,9 +1,9 @@
-import {H, W, Helpers, Piece} from '../lib/helpers.js';
-import {colors} from '../lib/colors.js';
-import {Transform} from '../lib/transform.js';
+import {H, W, Helpers, P5Piece} from '../lib/p5/helpers.js';
+import {colors} from '../lib/p5/colors.js';
+import {Transform} from '../lib/p5/transform.js';
 import {polygonPoints} from '../lib/geometry.js';
 
-export default new Piece(() => {
+export default new P5Piece(() => {
   colors.setup('pear36');
   colors.Background = colors.purple;
   background(colors.Background);

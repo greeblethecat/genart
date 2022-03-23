@@ -1,7 +1,15 @@
 import {colors} from './colors.js';
+import {Piece} from '../piece.js';
 
-export const W = window.innerWidth;
-export const H = window.innerHeight;
+const IN_BROWSER = typeof window !== 'undefined';
+
+export let W = 0;
+export let H = 0;
+if (IN_BROWSER) {
+  W = window.innerWidth;
+  H = window.innerHeight;
+} else {
+}
 
 export const Colors = colors;
 
@@ -10,10 +18,10 @@ export class Helpers {
   static W = W;
   static H = H;
 
-  static Piece = class {
+  static P5Piece = class extends Piece {
 
     initialize(opts) {
-      this.setup = function() {
+      this.setup = function () {
         Helpers.setupP5();
         opts.setup();
       };
@@ -25,11 +33,12 @@ export class Helpers {
     }
 
     constructor(...args) {
+      super(...args);
       let opts = args[0];
-      if (typeof(args[0]) === 'function') {
+      if (typeof (args[0]) === 'function') {
         opts = {};
         opts.setup = args[0];
-        if (typeof(args[1]) === 'function') {
+        if (typeof (args[1]) === 'function') {
           opts.draw = args[1];
         }
       }
@@ -38,10 +47,10 @@ export class Helpers {
 
     setupPiece() {
       if (this.setup) {
-        window.setup = this.setup;
+        if (IN_BROWSER) window.setup = this.setup;
       }
       if (this.draw) {
-        window.draw = this.draw;
+        if (IN_BROWSER) window.draw = this.draw;
       }
       console.log(this);
     }
@@ -64,9 +73,11 @@ export class Helpers {
   }
 
   static getQueryParams() {
-    const queryString = window.location.search;
-    const urlParams = new URLSearchParams(queryString);
-    return urlParams;
+    if (IN_BROWSER) {
+      const queryString = window.location.search;
+      const urlParams = new URLSearchParams(queryString);
+      return urlParams;
+    }
   }
 
   static argsPairsToQueryParamsString(...args) {
@@ -80,19 +91,21 @@ export class Helpers {
   }
 
   static setupQueryParams(defaults) {
-    let queryParamsObject = {};
-    for (const [key, value] of this.getQueryParams().entries()) {
-      queryParamsObject[key] = value;
+    if (IN_BROWSER) {
+      let queryParamsObject = {};
+      for (const [key, value] of this.getQueryParams().entries()) {
+        queryParamsObject[key] = value;
+      }
+      let opts = Object.assign(defaults, queryParamsObject);
+      let replaceLocation = Object.keys(defaults).filter(k => !queryParamsObject[k]).length > 0;
+      if (replaceLocation) {
+        let location = window.location.toString().split('?')[0];
+        window.location.replace(location + this.argsPairsToQueryParamsString(
+          ...Object.entries(opts).flat()
+        ));
+      }
+      return opts;
     }
-    let opts = Object.assign(defaults, queryParamsObject);
-    let replaceLocation = Object.keys(defaults).filter(k => !queryParamsObject[k]).length > 0;
-    if (replaceLocation) {
-      let location = window.location.toString().split('?')[0];
-      window.location.replace(location + this.argsPairsToQueryParamsString(
-        ...Object.entries(opts).flat()
-      ));
-    }
-    return opts;
   }
 
   static createArray(length) {
@@ -113,4 +126,4 @@ export class Helpers {
   static clamp = (num, min, max) => Math.min(Math.max(num, min), max);
 }
 
-export const Piece = Helpers.Piece;
+export const P5Piece = Helpers.P5Piece;

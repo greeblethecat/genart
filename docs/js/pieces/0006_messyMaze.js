@@ -1,8 +1,11 @@
-import {W, H, Helpers} from '../lib/helpers.js';
-import * as colors from '../lib/colors.js';
+import {W, H, Helpers} from '../lib/p5/helpers.js';
+import * as colors from '../lib/p5/colors.js';
 
-const cellSize = Helpers.getQueryParams().get('size') || 16;
-if (!Helpers.getQueryParams().get('size')) window.location.replace(window.location + Helpers.argsPairsToQueryParamsString('size', cellSize));
+let cellSize = 0;
+if (typeof window !== 'undefined') {
+  cellSize = Helpers.getQueryParams().get('size') || 16;
+  if (!Helpers.getQueryParams().get('size')) window.location.replace(window.location + Helpers.argsPairsToQueryParamsString('size', cellSize));
+}
 
 const cellWallStrokeWeight = cellSize / 5;
 let grid;
@@ -178,7 +181,7 @@ function drawPath(p, index, color) {
   return index + 1;
 }
 
-export default new Helpers.Piece(() => {
+export default new Helpers.P5Piece(() => {
   c = colors.setup();
   palette.wall = 'black';
   palette.background = c.pear36.darkPurple;

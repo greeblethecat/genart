@@ -1,7 +1,5 @@
-import {Helpers} from '../lib/helpers.js'
+import {Helpers, W, H} from '../lib/p5/helpers.js'
 
-const w = window.innerWidth;
-const h = window.innerHeight;
 const AllPoints = [];
 const AveragePointScale = 25;
 
@@ -14,7 +12,7 @@ class Point {
   }
 
   static CreateNewRandomPoint(scale) {
-    return new Point({x: Math.random() * w, y: Math.random() * h}, Math.random() * AveragePointScale);
+    return new Point({x: Math.random() * W, y: Math.random() * H}, Math.random() * AveragePointScale);
   }
 
   static UpdateUniversalGravitation(points) {
@@ -33,7 +31,7 @@ class Point {
 
 }
 
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
     const NumPieces = 64;
     for (let i = 0; i < NumPieces; i++) {

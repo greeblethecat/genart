@@ -1,14 +1,11 @@
-import {Helpers} from '../lib/helpers.js'
-
-const w = window.innerWidth;
-const h = window.innerHeight;
+import {Helpers, W, H} from '../lib/p5/helpers.js'
 
 let minRings = 8;
 let maxRings = 128;
 let count = minRings;
 let countPingPong = true;
 
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
   },
 
@@ -31,7 +28,7 @@ export default new Helpers.Piece({
       let color = lerpColor(fromColor, toColor, i / (count - 1));
       fill(color);
       stroke('black');
-      circle(w / 2, h / 2, (count - i) * (w / count));
+      circle(W / 2, H / 2, (count - i) * (W / count));
     }
   },
 });

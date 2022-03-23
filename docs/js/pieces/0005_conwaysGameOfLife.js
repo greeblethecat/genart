@@ -1,5 +1,5 @@
-import {W, H, Helpers} from '../lib/helpers.js';
-import * as colors from '../lib/colors.js';
+import {W, H, Helpers} from '../lib/p5/helpers.js';
+import * as colors from '../lib/p5/colors.js';
 
 let c;
 const cellSize = 2;
@@ -9,7 +9,7 @@ const grid1 = Helpers.createArray(gridW, gridH);
 const grid2 = Helpers.createArray(gridW, gridH);
 let tick = true;
 
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
     background(0);
     c = colors.setup();

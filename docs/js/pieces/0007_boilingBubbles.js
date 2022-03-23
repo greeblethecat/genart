@@ -1,10 +1,10 @@
-import {colors} from '../lib/colors.js';
-import {Helpers, W} from '../lib/helpers.js';
-import {Transform} from '../lib/transform.js';
+import {colors} from '../lib/p5/colors.js';
+import {Helpers, W} from '../lib/p5/helpers.js';
+import {Transform} from '../lib/p5/transform.js';
 
 const opts = Helpers.setupQueryParams({seed: 'foobar'});
 
-export default new Helpers.Piece(function () {
+export default new Helpers.P5Piece(function () {
   colors.setup('pear36');
   const random = new Math.seedrandom(opts.seed);
   rectMode(CORNER);

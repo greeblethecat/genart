@@ -1,7 +1,4 @@
-import {Helpers} from '../lib/helpers.js';
-
-const w = window.innerWidth;
-const h = window.innerHeight;
+import {Helpers, W, H} from '../lib/p5/helpers.js';
 
 function drawStar(posx, posy, size, color = 'white') {
   stroke(color);
@@ -9,15 +6,15 @@ function drawStar(posx, posy, size, color = 'white') {
   point(posx, posy);
 }
 
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
-    createCanvas(w, h);
+    createCanvas(W, H);
     noLoop(); // causes draw to be called only once
   },
   draw() {
     background(0, 0, 0);
-    for (let i = 0; i < (w * h) * 0.003125; i++) {
-      drawStar(Math.random() * w, Math.random() * h, Math.random() * 2.5);
+    for (let i = 0; i < (W * H) * 0.003125; i++) {
+      drawStar(Math.random() * W, Math.random() * H, Math.random() * 2.5);
     }
   }
 });

@@ -2,11 +2,12 @@
  * Starts web server to serve the github pages app locally and then
  * watches source code files, rebuilding the project when they are changed.
  */
-const build = require('./build'); // watch depends on build
-const express = require('express');
-const {exec} = require('child_process');
+import build from './build.js'; // watch depends on build
+import express from 'express';
+import {exec} from 'child_process';
+import readline from 'readline';
 
-const DocsDir = __dirname + '/docs';
+const DocsDir = './docs';
 const Port = 3000;
 const app = express();
 app.use('/genart', express.static(DocsDir));
@@ -14,7 +15,6 @@ app.listen(Port);
 
 console.log(`Now serving: http://localhost:${Port}/genart`);
 
-const readline = require('readline');
 
 function askQuestion(query) {
   const rl = readline.createInterface({

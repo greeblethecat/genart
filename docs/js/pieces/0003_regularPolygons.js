@@ -1,7 +1,7 @@
-import {W, H, Helpers} from '../lib/helpers.js';
+import {W, H, Helpers} from '../lib/p5/helpers.js';
 import {polygonPoints} from '../lib/geometry.js';
 
-export default new Helpers.Piece({
+export default new Helpers.P5Piece({
   setup() {
     background('white');
   },
