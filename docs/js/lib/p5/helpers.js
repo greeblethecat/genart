@@ -94,7 +94,9 @@ export class Helpers {
     if (IN_BROWSER) {
       let queryParamsObject = {};
       for (const [key, value] of this.getQueryParams().entries()) {
-        queryParamsObject[key] = value;
+        if (value) {
+          queryParamsObject[key] = value;
+        }
       }
       let opts = Object.assign(defaults, queryParamsObject);
       let replaceLocation = Object.keys(defaults).filter(k => !queryParamsObject[k]).length > 0;
