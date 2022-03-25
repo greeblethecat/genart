@@ -1,14 +1,14 @@
 import {Piece} from '../piece.js';
 
-const DefaultOpts = {
-};
-
 export default class PixiPiece extends Piece {
 
-  constructor(opts = DefaultOpts) {
+  constructor(func) {
     super();
     this.renderer = 'pixi';
-    //this.opts = Object.assign(DefaultOpts, opts);
+    this.func = func;
+    if (typeof window !== 'undefined') {
+      this.func();
+    }
   }
 
 }
